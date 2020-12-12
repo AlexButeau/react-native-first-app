@@ -1,113 +1,60 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, FlatList, Alert} from 'react-native';
+import Header from './components/Header';
+import ListItem from './components/ListItem';
+import AddItem from './components/AddItem';
+// import 'react-native-get-random-values';
+// import {v4 as uuidv4} from 'uuid';
 
-import React from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+const App = () => {
+  const [items, setItems] = useState([
+    {id: 1, text: 'Bread'},
+    {id: 2, text: 'Veggies'},
+    {id: 3, text: 'Beer'},
+    {id: 4, text: 'Cereals'},
+  ]);
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  const deleteItem = (id) => {
+    setItems((prevItems) => {
+      return prevItems.filter((item) => item.id !== id);
+    });
+  };
 
-const App: () => React$Node = () => {
+  const addItem = (text) => {
+    if (!text) {
+      Alert.alert('Error', 'Please enter an item', [{text: 'Ok'}]);
+    } else {
+      setItems((prevItems) => {
+        return [{id: Date.now(), text}, ...prevItems];
+      });
+    }
+  };
+
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    // cannot use html tags here, you have to use React Native components
+    // the view component enables to set a display flex, except it works a bit differently from the "normal" flex, e.g direction column by default
+    <View style={styles.container}>
+      <Header title="Shopping List" />
+      {/* <Text style={styles.text}>Hello World</Text>
+      <Image
+        source={{uri: 'https://randomuser.me/api/portraits/men/3.jpg'}}
+        style={styles.img}
+      /> */}
+      <AddItem addItem={addItem} />
+      <FlatList
+        data={items}
+        renderItem={({item}) => (
+          <ListItem item={item} deleteItem={deleteItem} />
+        )}
+        keyExtractor={(item) => item.id.toString()}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+  container: {
+    flex: 1,
   },
 });
 
